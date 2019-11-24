@@ -11,6 +11,7 @@
       <div v-html="generateAlbumDiff(discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
     </div>
 
+    <!-- // FIXME just to log -->
     {{elementSelected}}
   </div>
 </template>
@@ -19,11 +20,12 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'Discography',
+  name: 'DiscographyComponent',
 
   data () {
     return {
       bandName: 'Vhäldemar',
+      // FIXME just to log
       elementSelected: null
     }
   },
@@ -36,7 +38,10 @@ export default {
 
   methods: {
     ...mapActions([
-      'loadDiscography'
+      'loadDiscography',
+      'plusAlbum',
+      'minusAlbum',
+      'changeAlbum'
     ]),
 
     findDiscography () {
@@ -232,19 +237,20 @@ export default {
 
     handleAlbumDiffClick (event) {
       if (event.target.parentNode.matches('.albumDiff')) {
+        let bandId = this.discography.band.id
         let index = event.target.parentNode.attributes.data.nodeValue
         let albumDiff = this.discography.albumDiffs[index]
         switch (albumDiff.type) {
           case 'PLUS':
-            this.handleAlbumDiffPlus(albumDiff)
+            this.handleAlbumDiffPlus(bandId, albumDiff)
             break
 
           case 'MINUS':
-            this.handleAlbumDiffMinus(albumDiff)
+            this.handleAlbumDiffMinus(bandId, albumDiff)
             break
 
           case 'CHANGE':
-            this.handleAlbumDiffChange(albumDiff)
+            this.handleAlbumDiffChange(bandId, albumDiff)
             break
         }
 
@@ -253,19 +259,28 @@ export default {
       }
     },
 
-    handleAlbumDiffPlus (albumDiff) {
-      console.log('+')
-      console.log(albumDiff)
+    handleAlbumDiffPlus (bandId, albumDiff) {
+      this.plusAlbum({
+        bandId: bandId,
+        albumRevised: albumDiff.revised[0]
+      })
     },
 
-    handleAlbumDiffMinus (albumDiff) {
+    handleAlbumDiffMinus (bandId, albumDiff) {
+      this.minusAlbum({
+        bandId: bandId,
+        albumOriginal: albumDiff.original[0]
+      })
       console.log('-')
-      console.log(albumDiff)
+      console.log(bandId, albumDiff)
     },
 
-    handleAlbumDiffChange (albumDiff) {
-      console.log('>')
-      console.log(albumDiff)
+    handleAlbumDiffChange (bandId, albumDiff) {
+      this.changeAlbum({
+        bandId: bandId,
+        albumOriginal: albumDiff.original[0],
+        albumRevised: albumDiff.revised[0]
+      })
     }
   }
 }

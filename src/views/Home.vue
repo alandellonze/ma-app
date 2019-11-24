@@ -1,17 +1,17 @@
 <template>
   <div class="home">
-    <Discography />
+    <DiscographyComponent />
   </div>
 </template>
 
 <script>
-import Discography from '@/components/Discography.vue'
+import DiscographyComponent from '@/components/DiscographyComponent.vue'
 
 export default {
   name: 'home',
 
   components: {
-    Discography
+    DiscographyComponent
   }
 }
 </script>
