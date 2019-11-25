@@ -3,7 +3,7 @@
     <h2>Metal Archives</h2>
 
     <input v-model="bandName" />
-    <button @click="findDiscography">Go</button>
+    <button @click="loadDiscography">Go</button>
 
     <div v-if="discography != null">
       <p>{{discography.band.name}} ({{discography.changes}} differences)</p>
@@ -38,14 +38,16 @@ export default {
 
   methods: {
     ...mapActions([
-      'loadDiscography',
+      'getAllDiscography',
       'plusAlbum',
       'minusAlbum',
       'changeAlbum'
     ]),
 
-    findDiscography () {
-      this.loadDiscography(this.bandName)
+    loadDiscography () {
+      this.getAllDiscography({
+        bandName: this.bandName
+      })
     },
 
     generateAlbumDiff (albumDiffs) {
@@ -237,20 +239,20 @@ export default {
 
     handleAlbumDiffClick (event) {
       if (event.target.parentNode.matches('.albumDiff')) {
-        let bandId = this.discography.band.id
+        let band = this.discography.band
         let index = event.target.parentNode.attributes.data.nodeValue
         let albumDiff = this.discography.albumDiffs[index]
         switch (albumDiff.type) {
           case 'PLUS':
-            this.handleAlbumDiffPlus(bandId, albumDiff)
+            this.handleAlbumDiffPlus(band, albumDiff)
             break
 
           case 'MINUS':
-            this.handleAlbumDiffMinus(bandId, albumDiff)
+            this.handleAlbumDiffMinus(albumDiff)
             break
 
           case 'CHANGE':
-            this.handleAlbumDiffChange(bandId, albumDiff)
+            this.handleAlbumDiffChange(band, albumDiff)
             break
         }
 
@@ -259,27 +261,23 @@ export default {
       }
     },
 
-    handleAlbumDiffPlus (bandId, albumDiff) {
+    handleAlbumDiffPlus (band, albumDiff) {
       this.plusAlbum({
-        bandId: bandId,
-        albumRevised: albumDiff.revised[0]
+        band: band,
+        albumDiff: albumDiff
       })
     },
 
-    handleAlbumDiffMinus (bandId, albumDiff) {
+    handleAlbumDiffMinus (albumDiff) {
       this.minusAlbum({
-        bandId: bandId,
-        albumOriginal: albumDiff.original[0]
+        albumId: albumDiff.original[0].id
       })
-      console.log('-')
-      console.log(bandId, albumDiff)
     },
 
-    handleAlbumDiffChange (bandId, albumDiff) {
+    handleAlbumDiffChange (band, albumDiff) {
       this.changeAlbum({
-        bandId: bandId,
-        albumOriginal: albumDiff.original[0],
-        albumRevised: albumDiff.revised[0]
+        band: band,
+        albumDiff: albumDiff
       })
     }
   }

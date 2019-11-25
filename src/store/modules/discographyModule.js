@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+const API_URL = process.env.VUE_APP_API_URL
+
 let initialState = () => {
   return {
     discography: null
@@ -16,55 +18,36 @@ export const discographyModule = {
   },
 
   actions: {
-    loadDiscography: async ({ commit }, bandName) => {
-      // FIXME externalize config
-      let discography = await axios.get(`http://localhost:8080/discography/${bandName}`)
+    getAllDiscography: async ({ commit }, params) => {
+      let discography = await axios.get(`${API_URL}/discography/${params.bandName}`)
       commit('mutateDiscography', discography.data)
     },
 
+    // FIXME to be implemented: plus
     plusAlbum: async ({ commit }, params) => {
-      console.log(params.albumRevised)
       let data = {
-        bandId: params.bandId,
-        type: params.albumRevised.type,
-        typeCount: params.albumRevised.typeCount,
-        name: params.albumRevised.name,
-        year: params.albumRevised.year
+        band: params.band,
+        albumDiff: params.albumDiff
       }
 
-      // FIXME externalize config
-      let result = await axios.post(`http://localhost:8080/discography/`, data)
+      let result = await axios.post(`${API_URL}/discography/`, data)
       console.log(result)
     },
 
+    // FIXME to be implemented: minus
     minusAlbum: async ({ commit }, params) => {
-      let data = {
-        bandId: params.bandId,
-        id: params.albumOriginal.id,
-        type: params.albumOriginal.type,
-        typeCount: params.albumOriginal.typeCount,
-        name: params.albumOriginal.name,
-        year: params.albumOriginal.year
-      }
-
-      // FIXME externalize config
-      let result = await axios.delete(`http://localhost:8080/discography/`, data)
+      let result = await axios.delete(`${API_URL}/discography/${params.albumId}`)
       console.log(result)
     },
 
+    // FIXME to be implemented: change
     changeAlbum: async ({ commit }, params) => {
-      // FIXME fix params
       let data = {
-        bandId: params.bandId,
-        id: params.albumOriginal.id,
-        type: params.albumOriginal.type,
-        typeCount: params.albumOriginal.typeCount,
-        name: params.albumOriginal.name,
-        year: params.albumOriginal.year
+        band: params.band,
+        albumDiff: params.albumDiff
       }
 
-      // FIXME externalize config
-      let result = await axios.put(`http://localhost:8080/discography/`, data)
+      let result = await axios.put(`${API_URL}/discography/`, data)
       console.log(result)
     }
   },
