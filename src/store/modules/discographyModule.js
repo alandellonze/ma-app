@@ -23,32 +23,43 @@ export const discographyModule = {
       commit('mutateDiscography', discography.data)
     },
 
-    // FIXME to be implemented: plus
-    plusAlbum: async ({ commit }, params) => {
+    plusAlbum: async ({ dispatch }, params) => {
       let data = {
         band: params.band,
         albumDiff: params.albumDiff
       }
 
       let result = await axios.post(`${API_URL}/discography/`, data)
-      console.log(result)
+      if (result.status === 200) {
+        dispatch('getAllDiscography', {
+          bandName: params.band.name
+        })
+      }
     },
 
-    // FIXME to be implemented: minus
-    minusAlbum: async ({ commit }, params) => {
-      let result = await axios.delete(`${API_URL}/discography/${params.albumId}`)
-      console.log(result)
+    minusAlbum: async ({ dispatch }, params) => {
+      let albumId = params.albumDiff.original[0].id
+
+      let result = await axios.delete(`${API_URL}/discography/${albumId}`)
+      if (result.status === 200) {
+        dispatch('getAllDiscography', {
+          bandName: params.band.name
+        })
+      }
     },
 
-    // FIXME to be implemented: change
-    changeAlbum: async ({ commit }, params) => {
+    changeAlbum: async ({ dispatch }, params) => {
       let data = {
         band: params.band,
         albumDiff: params.albumDiff
       }
 
       let result = await axios.put(`${API_URL}/discography/`, data)
-      console.log(result)
+      if (result.status === 200) {
+        dispatch('getAllDiscography', {
+          bandName: params.band.name
+        })
+      }
     }
   },
 

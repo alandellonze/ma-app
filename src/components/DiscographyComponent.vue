@@ -10,9 +10,6 @@
 
       <div v-html="generateAlbumDiff(discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
     </div>
-
-    <!-- // FIXME just to log -->
-    {{elementSelected}}
   </div>
 </template>
 
@@ -24,9 +21,7 @@ export default {
 
   data () {
     return {
-      bandName: 'Vhäldemar',
-      // FIXME just to log
-      elementSelected: null
+      bandName: 'Iron Maiden'
     }
   },
 
@@ -248,16 +243,13 @@ export default {
             break
 
           case 'MINUS':
-            this.handleAlbumDiffMinus(albumDiff)
+            this.handleAlbumDiffMinus(band, albumDiff)
             break
 
           case 'CHANGE':
             this.handleAlbumDiffChange(band, albumDiff)
             break
         }
-
-        // FIXME just to log
-        this.elementSelected = albumDiff
       }
     },
 
@@ -268,9 +260,10 @@ export default {
       })
     },
 
-    handleAlbumDiffMinus (albumDiff) {
+    handleAlbumDiffMinus (band, albumDiff) {
       this.minusAlbum({
-        albumId: albumDiff.original[0].id
+        band: band,
+        albumDiff: albumDiff
       })
     },
 
