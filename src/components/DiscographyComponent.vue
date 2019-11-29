@@ -8,7 +8,7 @@
     <div v-if="discography != null">
       <p>{{discography.band.name}} ({{discography.changes}} differences)</p>
 
-      <div v-html="generateAlbumDiff(discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
+      <div v-html="generateAlbumDiff(discography.changes, discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
     </div>
   </div>
 </template>
@@ -45,7 +45,7 @@ export default {
       })
     },
 
-    generateAlbumDiff (albumDiffs) {
+    generateAlbumDiff (changes, albumDiffs) {
       let html = '<table cellspacing="0" cellpadding="5" style="font-size: 12px; border-bottom: 1px SOLID #AAAAAA;">'
 
       albumDiffs.forEach((albumDiff, index) => {
@@ -53,7 +53,7 @@ export default {
           case 'EQUAL':
             albumDiff.original.forEach(albumOriginal => {
               html += '<tr>'
-              html += this.generateRows(albumDiff.type, albumOriginal, null)
+              html += this.generateRows(changes, albumDiff.type, albumOriginal, null)
               html += '</tr>'
             })
             break
@@ -61,7 +61,7 @@ export default {
           case 'PLUS':
             albumDiff.revised.forEach(albumRevised => {
               html += '<tr data="' + index + '" class="albumDiff plus">'
-              html += this.generateRows(albumDiff.type, null, albumRevised)
+              html += this.generateRows(changes, albumDiff.type, null, albumRevised)
               html += '</tr>'
             })
             break
@@ -69,7 +69,7 @@ export default {
           case 'MINUS':
             albumDiff.original.forEach(albumOriginal => {
               html += '<tr data="' + index + '" class="albumDiff minus">'
-              html += this.generateRows(albumDiff.type, albumOriginal, null)
+              html += this.generateRows(changes, albumDiff.type, albumOriginal, null)
               html += '</tr>'
             })
             break
@@ -81,7 +81,7 @@ export default {
               let albumRevised = (i < albumDiff.revised.length) ? albumDiff.revised[i] : null
 
               html += '<tr data="' + index + '" class="albumDiff change">'
-              html += this.generateRows(albumDiff.type, albumOriginal, albumRevised)
+              html += this.generateRows(changes, albumDiff.type, albumOriginal, albumRevised)
               html += '</tr>'
             }
 
@@ -89,7 +89,7 @@ export default {
               let albumRevised = albumDiff.revised[i]
 
               html += '<tr data="' + index + '" class="albumDiff change">'
-              html += this.generateRows(albumDiff.type, null, albumRevised)
+              html += this.generateRows(changes, albumDiff.type, null, albumRevised)
               html += '</tr>'
             }
             break
@@ -100,7 +100,7 @@ export default {
       return html
     },
 
-    generateRows (diffType, albumOriginal, albumRevised) {
+    generateRows (changes, diffType, albumOriginal, albumRevised) {
       let html = this.generateDiffType(diffType)
 
       if (albumOriginal) {
@@ -110,7 +110,7 @@ export default {
         html += this.generateName(albumOriginal)
         html += this.generateYear(albumOriginal)
         html += this.generateStatus(albumOriginal)
-      } else {
+      } else if (changes) {
         html += this.generateTd(true)
         html += this.generateTd(true)
         html += this.generateTd(true)
@@ -120,11 +120,12 @@ export default {
       }
 
       if (albumRevised) {
+        html += this.generatePosition(albumRevised)
         html += this.generateType(albumRevised)
         html += this.generateTypeCount(albumRevised)
         html += this.generateName(albumRevised)
         html += this.generateYear(albumRevised)
-      } else {
+      } else if (changes) {
         html += this.generateTd(true)
         html += this.generateTd(true)
         html += this.generateTd(true)
