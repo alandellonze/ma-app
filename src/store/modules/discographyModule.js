@@ -23,41 +23,41 @@ export const discographyModule = {
       commit('mutateDiscography', discography.data)
     },
 
-    plusAlbum: async ({ dispatch }, params) => {
+    plusAlbum: async ({ state, dispatch }, params) => {
       let data = {
-        band: params.band,
+        band: state.discography.band,
         albumDiff: params.albumDiff
       }
 
       let result = await axios.post(`${API_URL}/discography/`, data)
       if (result.status === 200) {
         dispatch('getAllDiscography', {
-          bandName: params.band.name
+          bandName: state.discography.band.name
         })
       }
     },
 
-    minusAlbum: async ({ dispatch }, params) => {
+    minusAlbum: async ({ state, dispatch }, params) => {
       let albumId = params.albumDiff.original[0].id
 
       let result = await axios.delete(`${API_URL}/discography/${albumId}`)
       if (result.status === 200) {
         dispatch('getAllDiscography', {
-          bandName: params.band.name
+          bandName: state.discography.band.name
         })
       }
     },
 
-    changeAlbum: async ({ dispatch }, params) => {
+    changeAlbum: async ({ state, dispatch }, params) => {
       let data = {
-        band: params.band,
+        band: state.discography.band,
         albumDiff: params.albumDiff
       }
 
       let result = await axios.put(`${API_URL}/discography/`, data)
       if (result.status === 200) {
         dispatch('getAllDiscography', {
-          bandName: params.band.name
+          bandName: state.discography.band.name
         })
       }
     }

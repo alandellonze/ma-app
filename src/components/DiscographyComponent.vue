@@ -2,26 +2,37 @@
   <div class="discography">
     <h2>Metal Archives</h2>
 
+    <!-- search component -->
     <input v-model="bandName" />
     <button @click="loadDiscography">Go</button>
 
+    <!-- table component -->
     <div v-if="discography != null">
       <p>{{discography.band.name}} ({{discography.changes}} differences)</p>
 
       <div v-html="generateAlbumDiff(discography.changes, discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
     </div>
+
+    <!-- popup component -->
+    <discography-popup :albumDiff="albumDiffSelected"></discography-popup>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import DiscographyPopup from './DiscographyPopup.vue'
 
 export default {
   name: 'DiscographyComponent',
 
+  components: {
+    DiscographyPopup
+  },
+
   data () {
     return {
-      bandName: 'Iron Maiden'
+      bandName: 'Turisas',
+      albumDiffSelected: null
     }
   },
 
@@ -33,13 +44,12 @@ export default {
 
   methods: {
     ...mapActions([
-      'getAllDiscography',
-      'plusAlbum',
-      'minusAlbum',
-      'changeAlbum'
+      'getAllDiscography'
     ]),
 
     loadDiscography () {
+      this.albumDiffSelected = null
+
       this.getAllDiscography({
         bandName: this.bandName
       })
@@ -120,7 +130,6 @@ export default {
       }
 
       if (albumRevised) {
-        html += this.generatePosition(albumRevised)
         html += this.generateType(albumRevised)
         html += this.generateTypeCount(albumRevised)
         html += this.generateName(albumRevised)
@@ -235,44 +244,9 @@ export default {
 
     handleAlbumDiffClick (event) {
       if (event.target.parentNode.matches('.albumDiff')) {
-        let band = this.discography.band
         let index = event.target.parentNode.attributes.data.nodeValue
-        let albumDiff = this.discography.albumDiffs[index]
-        switch (albumDiff.type) {
-          case 'PLUS':
-            this.handleAlbumDiffPlus(band, albumDiff)
-            break
-
-          case 'MINUS':
-            this.handleAlbumDiffMinus(band, albumDiff)
-            break
-
-          case 'CHANGE':
-            this.handleAlbumDiffChange(band, albumDiff)
-            break
-        }
+        this.albumDiffSelected = this.discography.albumDiffs[index]
       }
-    },
-
-    handleAlbumDiffPlus (band, albumDiff) {
-      this.plusAlbum({
-        band: band,
-        albumDiff: albumDiff
-      })
-    },
-
-    handleAlbumDiffMinus (band, albumDiff) {
-      this.minusAlbum({
-        band: band,
-        albumDiff: albumDiff
-      })
-    },
-
-    handleAlbumDiffChange (band, albumDiff) {
-      this.changeAlbum({
-        band: band,
-        albumDiff: albumDiff
-      })
     }
   }
 }
