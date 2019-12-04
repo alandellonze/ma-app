@@ -10,6 +10,12 @@
           <input v-model="albumRevised.typeCount" />
           <input v-model="albumRevised.name" />
           <input v-model="albumRevised.year" />
+          <select v-model="albumRevised.status">
+            <option value="NONE">?</option>
+            <option value="MISSED">x</option>
+            <option value="PRESENT">v</option>
+            <option value="PRESENT_WITH_COVER">c</option>
+          </select>
         </div>
       </div>
 
