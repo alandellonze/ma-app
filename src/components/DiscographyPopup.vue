@@ -40,15 +40,15 @@ export default {
     async handleClick () {
       switch (this.value.type) {
         case 'PLUS':
-          this.handlePlus()
+          await this.handlePlus()
           break
 
         case 'MINUS':
-          this.handleMinus()
+          await this.handleMinus()
           break
 
         case 'CHANGE':
-          this.handleChange()
+          await this.handleChange()
           break
       }
 
@@ -57,19 +57,19 @@ export default {
     },
 
     handlePlus () {
-      this.plusAlbum({
+      return this.plusAlbum({
         albumDiff: this.value
       })
     },
 
     handleMinus () {
-      this.minusAlbum({
+      return this.minusAlbum({
         albumDiff: this.value
       })
     },
 
-    async handleChange () {
-      await this.changeAlbum({
+    handleChange () {
+      return this.changeAlbum({
         albumDiff: this.value
       })
     }
