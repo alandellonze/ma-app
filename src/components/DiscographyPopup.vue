@@ -1,10 +1,10 @@
 <template>
-  <div class="discographyPopup" v-if="value">
+  <div class="discographyPopup" v-if="value != null">
     <div class="discographyPopupContent">
-      <div>{{albumDiff.type}}</div>
+      <div>{{value.type}}</div>
 
-      <div v-if="(albumDiff.type === 'PLUS' || albumDiff.type === 'CHANGE')">
-        <div v-for="albumRevised in albumDiff.revised" v-bind:key="albumRevised.id">
+      <div v-if="(value.type === 'PLUS' || value.type === 'CHANGE')">
+        <div v-for="albumRevised in value.revised" v-bind:key="albumRevised.id">
           <input v-model="albumRevised.position" />
           <input v-model="albumRevised.type" />
           <input v-model="albumRevised.typeCount" />
@@ -25,7 +25,6 @@ export default {
   name: 'DiscographyPopup',
 
   props: {
-    albumDiff: Object,
     value: {
       required: true
     }
@@ -39,7 +38,7 @@ export default {
     ]),
 
     async handleClick () {
-      switch (this.albumDiff.type) {
+      switch (this.value.type) {
         case 'PLUS':
           this.handlePlus()
           break
@@ -53,27 +52,26 @@ export default {
           break
       }
 
-      // reset state
-      this.show = false
+      // reset value's state
+      this.$emit('input', null)
     },
 
     handlePlus () {
       this.plusAlbum({
-        albumDiff: this.albumDiff
+        albumDiff: this.value
       })
     },
 
     handleMinus () {
       this.minusAlbum({
-        albumDiff: this.albumDiff
+        albumDiff: this.value
       })
     },
 
     async handleChange () {
-      // await this.changeAlbum({
-      //   albumDiff: this.albumDiff
-      // })
-      this.$emit('input', !this.value)
+      await this.changeAlbum({
+        albumDiff: this.value
+      })
     }
   }
 }
@@ -81,23 +79,23 @@ export default {
 
 <style>
 .discographyPopup {
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
+  position: fixed;
+  z-index: 1;
+  padding-top: 100px;
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .discographyPopupContent {
-  background-color: #fefefe;
+  background-color: #FEFEFE;
   margin: auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid #888888;
   width: 80%;
 }
 </style>

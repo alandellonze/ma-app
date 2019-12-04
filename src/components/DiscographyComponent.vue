@@ -13,7 +13,7 @@
       <div v-html="generateAlbumDiff(discography.changes, discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
 
       <!-- popup component -->
-      <discography-popup v-model="openModal" :albumDiff="albumDiffSelected"></discography-popup>
+      <discography-popup v-model="albumDiffSelected"></discography-popup>
     </div>
   </div>
 </template>
@@ -32,8 +32,7 @@ export default {
   data () {
     return {
       bandName: 'Trivium',
-      albumDiffSelected: null,
-      openModal: false
+      albumDiffSelected: null
     }
   },
 
@@ -247,7 +246,6 @@ export default {
       if (event.target.parentNode.matches('.albumDiff')) {
         let index = event.target.parentNode.attributes.data.nodeValue
         this.albumDiffSelected = this.discography.albumDiffs[index]
-        this.openModal = !this.openModal
       }
     }
   }
