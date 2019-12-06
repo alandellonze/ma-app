@@ -11,15 +11,16 @@
           <input v-model="albumRevised.name" />
           <input v-model="albumRevised.year" />
           <select v-model="albumRevised.status">
-            <option value="NONE">?</option>
-            <option value="MISSED">x</option>
-            <option value="PRESENT">v</option>
-            <option value="PRESENT_WITH_COVER">c</option>
+            <option value="NONE">? - NONE</option>
+            <option value="MISSED">x - MISSED</option>
+            <option value="PRESENT">v - PRESENT</option>
+            <option value="PRESENT_WITH_COVER">v - PRESENT WITH COVER</option>
           </select>
         </div>
       </div>
 
-      <button @click="handleClick">Ok</button>
+      <button @click="confirm" class="confirm">ok</button>
+      <button @click="close" class="close">close</button>
     </div>
   </div>
 </template>
@@ -43,7 +44,7 @@ export default {
       'changeAlbum'
     ]),
 
-    async handleClick () {
+    async confirm () {
       switch (this.value.type) {
         case 'PLUS':
           await this.handlePlus()
@@ -58,8 +59,8 @@ export default {
           break
       }
 
-      // reset value's state
-      this.$emit('input', null)
+      // close popup
+      this.close()
     },
 
     handlePlus () {
@@ -78,12 +79,17 @@ export default {
       return this.changeAlbum({
         albumDiff: this.value
       })
+    },
+
+    close () {
+      // reset value's state
+      this.$emit('input', null)
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .discographyPopup {
   position: fixed;
   z-index: 1;
@@ -103,5 +109,17 @@ export default {
   padding: 20px;
   border: 1px solid #888888;
   width: 80%;
+}
+
+.confirm {
+  cursor: pointer;
+}
+
+.close {
+  outline: none;
+  border: none;
+  color: #0000DD;
+  text-decoration: underline;
+  cursor: pointer;
 }
 </style>

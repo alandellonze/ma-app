@@ -130,11 +130,13 @@ export default {
       }
 
       if (albumRevised) {
+        html += this.generatePosition(albumRevised)
         html += this.generateType(albumRevised)
         html += this.generateTypeCount(albumRevised)
         html += this.generateName(albumRevised)
         html += this.generateYear(albumRevised)
       } else if (changes) {
+        html += this.generateTd(true)
         html += this.generateTd(true)
         html += this.generateTd(true)
         html += this.generateTd(true)
@@ -173,7 +175,7 @@ export default {
     generateType (album) {
       let html = this.generateTd()
       if (album.maType) {
-        html += '<i>' + album.maType + '</i>'
+        html += '<i title="' + album.type + '">' + album.maType + ' *</i>'
       } else if (album.type) {
         html += album.type
       }
@@ -184,7 +186,7 @@ export default {
     generateTypeCount (album) {
       let html = this.generateTd()
       if (album.maTypeCount) {
-        html += '<i>' + this.formatInteger(album.maTypeCount) + '</i>'
+        html += '<i title="' + album.typeCount + '">' + this.formatInteger(album.maTypeCount) + ' *</i>'
       } else if (album.typeCount) {
         html += this.formatInteger(album.typeCount)
       }
@@ -199,7 +201,7 @@ export default {
     generateName (album) {
       let html = this.generateTd()
       if (album.maName) {
-        html += '<i>' + album.maName + '</i>'
+        html += '<i title="' + album.name + '">' + album.maName + '</i> *'
       } else if (album.name) {
         html += album.name
       }
