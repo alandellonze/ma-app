@@ -1,19 +1,31 @@
 <template>
   <div class="discography">
-    <h2>Metal Archives</h2>
+    <div class="header">
+      <h2 class="title">Metal Archives</h2>
 
-    <!-- search component -->
-    <input v-model="bandName" />
-    <button @click="loadDiscography">Go</button>
+      <div class="center">
+        <!-- search component -->
+        <input v-model="bandName" />
+        <button @click="loadDiscography">Go</button>
 
-    <!-- table component -->
-    <div v-if="discography != null">
-      <p>{{discography.band.name}} ({{discography.changes}} differences)</p>
+        <!-- result -->
+        <div v-if="discography != null">
+          <p>{{discography.band.name}} <span class="resultDiff">({{discography.changes}} differences)</span></p>
+        </div>
+      </div>
+    </div>
 
+    <!-- diff table -->
+    <div class="result" v-if="discography != null">
       <div v-html="generateAlbumDiff(discography.changes, discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
+    </div>
 
-      <!-- popup component -->
-      <discography-popup v-model="albumDiffSelected"></discography-popup>
+    <!-- popup component -->
+    <discography-popup v-model="albumDiffSelected"></discography-popup>
+
+    <!-- link component -->
+    <div class="linkComponent" v-if="discography != null">
+      <link-component :band="discography.band"></link-component>
     </div>
   </div>
 </template>
@@ -21,12 +33,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import DiscographyPopup from './DiscographyPopup.vue'
+import LinkComponent from './LinkComponent.vue'
 
 export default {
   name: 'DiscographyComponent',
 
   components: {
-    DiscographyPopup
+    DiscographyPopup,
+    LinkComponent
   },
 
   data () {
@@ -286,6 +300,32 @@ export default {
 </script>
 
 <style>
+  .header {
+    position: fixed;
+    top: 0px;
+    width: 50%;
+    background-color: #FFFFFF;
+  }
+
+  .title {
+    position: fixed;
+    top: 0px;
+    left: 15px;
+  }
+
+  .center {
+    margin-top: 15px;
+  }
+
+  .result {
+    margin-top: 100px;
+  }
+
+  .resultDiff {
+    font-style: italic;
+    font-size: small;
+  }
+
   .albumDiff {
     cursor: pointer;
   }
@@ -303,5 +343,13 @@ export default {
   .change {
     background-color: #EEECC0;
     color: #555555;
+  }
+
+  .linkComponent {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    font-size: small;
+    font-style: italic;
   }
 </style>

@@ -18,7 +18,9 @@
 }
 
 #nav {
-  padding-top: 15px;
+  position: fixed;
+  top: 15px;
+  right: 15px;
 }
 
 #nav a {
@@ -28,5 +30,6 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+  text-decoration: none;
 }
 </style>
