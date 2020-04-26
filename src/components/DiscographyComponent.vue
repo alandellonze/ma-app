@@ -31,7 +31,7 @@ export default {
 
   data () {
     return {
-      bandName: 'Trivium',
+      bandName: null,
       albumDiffSelected: null
     }
   },
@@ -120,13 +120,12 @@ export default {
         html += this.generateName(albumOriginal)
         html += this.generateYear(albumOriginal)
         html += this.generateStatus(albumOriginal)
+        html += this.generateMP3Status(albumOriginal)
+        html += this.generateCoverStatus(albumOriginal)
       } else if (changes) {
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
+        for (let i = 0; i < 8; i++) {
+          html += this.generateTd(true)
+        }
       }
 
       if (albumRevised) {
@@ -136,11 +135,9 @@ export default {
         html += this.generateName(albumRevised)
         html += this.generateYear(albumRevised)
       } else if (changes) {
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
-        html += this.generateTd(true)
+        for (let i = 0; i < 5; i++) {
+          html += this.generateTd(true)
+        }
       }
 
       return html
@@ -229,6 +226,40 @@ export default {
 
         case 'PRESENT':
         case 'PRESENT_WITH_COVER':
+          html += 'v'
+          break
+      }
+      html += '</td>'
+      return html
+    },
+
+    generateMP3Status (album) {
+      let html = this.generateTd()
+      switch (album.mp3Status) {
+        case 'NOT_PRESENT':
+          html += 'x'
+          break
+
+        case 'TMP':
+          html += '-'
+          break
+
+        case 'PRESENT':
+          html += 'v'
+          break
+      }
+      html += '</td>'
+      return html
+    },
+
+    generateCoverStatus (album) {
+      let html = this.generateTd()
+      switch (album.coverStatus) {
+        case 'NOT_PRESENT':
+          html += 'x'
+          break
+
+        case 'PRESENT':
           html += 'v'
           break
       }
