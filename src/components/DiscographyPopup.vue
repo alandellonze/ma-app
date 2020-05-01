@@ -1,16 +1,46 @@
 <template>
-  <div class="discographyPopup" v-if="value != null">
+  <div class="discographyPopup" v-if="value != null" @keydown.esc="close()">
     <div class="discographyPopupContent">
       <div>{{value.type}}</div>
 
-      <div v-if="(value.type === 'PLUS' || value.type === 'CHANGE')">
-        <div v-for="albumRevised in value.revised" v-bind:key="albumRevised.id">
-          <input v-model="albumRevised.position" />
-          <input v-model="albumRevised.type" />
-          <input v-model="albumRevised.typeCount" />
-          <input v-model="albumRevised.name" />
-          <input v-model="albumRevised.year" />
-          <select v-model="albumRevised.status">
+      <div v-if="value.type === 'EQUAL'">
+        <div v-for="album in value.original" v-bind:key="album.id">
+          <table>
+            <tr>
+              <td><input class="position" v-model="album.position" /></td>
+              <td><input class="type" v-model="album.type" /></td>
+              <td><input class="typeCount" v-model="album.typeCount" /></td>
+              <td><input class="name" v-model="album.name" /></td>
+              <td><input class="year" v-model="album.year" /></td>
+              <td>
+                <select class="status" v-model="album.status">
+                  <option value="NONE">? - NONE</option>
+                  <option value="MISSED">x - MISSED</option>
+                  <option value="PRESENT">v - PRESENT</option>
+                  <option value="PRESENT_WITH_COVER">v - PRESENT WITH COVER</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="position"></span></td>
+              <td><input class="type" v-model="album.maType" /></td>
+              <td><input class="typeCount" v-model="album.maTypeCount" /></td>
+              <td><input class="name" v-model="album.maName" /></td>
+              <td><span class="year"></span></td>
+              <td><span class="status"></span></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div v-if="value.type === 'PLUS' || value.type === 'CHANGE'">
+        <div v-for="album in value.revised" v-bind:key="album.id">
+          <input v-model="album.position" />
+          <input v-model="album.type" />
+          <input v-model="album.typeCount" />
+          <input v-model="album.name" />
+          <input v-model="album.year" />
+          <select v-model="album.status">
             <option value="NONE">? - NONE</option>
             <option value="MISSED">x - MISSED</option>
             <option value="PRESENT">v - PRESENT</option>
@@ -39,6 +69,7 @@ export default {
 
   methods: {
     ...mapActions([
+      'equalAlbum',
       'plusAlbum',
       'minusAlbum',
       'changeAlbum'
@@ -46,6 +77,10 @@ export default {
 
     async confirm () {
       switch (this.value.type) {
+        case 'EQUAL':
+          await this.handleEqual()
+          break
+
         case 'PLUS':
           await this.handlePlus()
           break
@@ -61,6 +96,12 @@ export default {
 
       // close popup
       this.close()
+    },
+
+    handleEqual () {
+      return this.equalAlbum({
+        albumDiff: this.value
+      })
     },
 
     handlePlus () {
@@ -108,7 +149,31 @@ export default {
   margin: auto;
   padding: 20px;
   border: 1px solid #888888;
-  width: 80%;
+  width: 50%;
+}
+
+.position {
+  width: 20px;
+}
+
+.type {
+  width: 100px;
+}
+
+.typeCount {
+  width: 20px;
+}
+
+.name {
+  width: 500px;
+}
+
+.year {
+  width: 35px;
+}
+
+.status {
+  width: 175px;
 }
 
 .confirm {

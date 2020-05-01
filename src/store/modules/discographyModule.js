@@ -23,6 +23,20 @@ export const discographyModule = {
       return commit('mutateDiscography', discography.data)
     },
 
+    equalAlbum: async ({ state, dispatch }, params) => {
+      let data = {
+        band: state.discography.band,
+        albumDiff: params.albumDiff
+      }
+
+      let result = await axios.patch(`${API_URL}/discography/`, data)
+      if (result.status === 200) {
+        return dispatch('getAllDiscography', {
+          bandName: state.discography.band.name
+        })
+      }
+    },
+
     plusAlbum: async ({ state, dispatch }, params) => {
       let data = {
         band: state.discography.band,

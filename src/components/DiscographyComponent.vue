@@ -76,7 +76,7 @@ export default {
         switch (albumDiff.type) {
           case 'EQUAL':
             albumDiff.original.forEach(albumOriginal => {
-              html += '<tr>'
+              html += '<tr data="' + index + '" class="albumDiff">'
               html += this.generateRows(changes, albumDiff.type, albumOriginal, null)
               html += '</tr>'
             })
@@ -231,16 +231,16 @@ export default {
       let html = this.generateTd()
       switch (album.status) {
         case 'NONE':
-          html += '?'
+          html += '<span title="not declared yet">?</span>'
           break
 
         case 'MISSED':
-          html += 'x'
+          html += '<span title="i don\'t have it">x</span>'
           break
 
         case 'PRESENT':
         case 'PRESENT_WITH_COVER':
-          html += 'v'
+          html += '<span title="i have it">v</span>'
           break
       }
       html += '</td>'
@@ -251,15 +251,15 @@ export default {
       let html = this.generateTd()
       switch (album.mp3Status) {
         case 'NOT_PRESENT':
-          html += 'x'
+          html += '<span title="mp3 not present">x</span>'
           break
 
         case 'TMP':
-          html += '-'
+          html += '<span title="mp3 temporary">-</span>'
           break
 
         case 'PRESENT':
-          html += 'v'
+          html += '<span title="mp3 present">v</span>'
           break
       }
       html += '</td>'
@@ -270,11 +270,11 @@ export default {
       let html = this.generateTd()
       switch (album.coverStatus) {
         case 'NOT_PRESENT':
-          html += 'x'
+          html += '<span title="cover not present">x</span>'
           break
 
         case 'PRESENT':
-          html += 'v'
+          html += '<span title="cover present">v</span>'
           break
       }
       html += '</td>'
@@ -328,6 +328,11 @@ export default {
 
   .albumDiff {
     cursor: pointer;
+  }
+
+  .albumDiff:hover {
+    background-color: #EFEFEF;
+    color: #555555;
   }
 
   .plus {
