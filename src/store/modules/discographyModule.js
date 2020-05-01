@@ -74,6 +74,12 @@ export const discographyModule = {
           bandName: state.discography.band.name
         })
       }
+    },
+
+    checkMP3: async ({ state, dispatch }, params) => {
+      let albumId = params.albumDiff.original[0].id
+
+      await axios.get(`${API_URL}/mp3/check/${albumId}`)
     }
   },
 

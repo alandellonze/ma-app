@@ -51,6 +51,7 @@
 
       <button @click="confirm" class="confirm">ok</button>
       <button @click="close" class="close">close</button>
+      <button @click="handleCheckMP3" class="checkMP3">mp3</button>
     </div>
   </div>
 </template>
@@ -72,7 +73,8 @@ export default {
       'equalAlbum',
       'plusAlbum',
       'minusAlbum',
-      'changeAlbum'
+      'changeAlbum',
+      'checkMP3'
     ]),
 
     async confirm () {
@@ -118,6 +120,12 @@ export default {
 
     handleChange () {
       return this.changeAlbum({
+        albumDiff: this.value
+      })
+    },
+
+    handleCheckMP3 () {
+      return this.checkMP3({
         albumDiff: this.value
       })
     },
@@ -186,5 +194,9 @@ export default {
   color: #0000DD;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.checkMP3 {
+  float: right;
 }
 </style>
