@@ -51,7 +51,12 @@
 
       <button @click="confirm" class="confirm">ok</button>
       <button @click="close" class="close">close</button>
-      <button @click="handleCheckMP3" class="checkMP3">mp3</button>
+
+      <button
+        v-if="value.type === 'EQUAL' && value.original[0].mp3Status !== 'NOT_PRESENT'"
+        @click="handleCheckMP3" class="checkMP3">
+        mp3
+      </button>
     </div>
   </div>
 </template>
