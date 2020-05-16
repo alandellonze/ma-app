@@ -19,7 +19,11 @@ export const discographyModule = {
 
   actions: {
     getAllDiscography: async ({ commit }, params) => {
-      let discography = await axios.get(`${API_URL}/discography/${params.bandName}`)
+      let discography = await axios.get(`${API_URL}/discography/`, {
+        params: {
+          bandName: params.bandName
+        }
+      })
       return commit('mutateDiscography', discography.data)
     },
 
