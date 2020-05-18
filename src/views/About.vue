@@ -4,8 +4,22 @@
 
     <img alt="Metal Archives" src="../assets/logo.png">
     <p>@ade</p>
+
+    <AllDiffComponent />
   </div>
 </template>
+
+<script>
+import AllDiffComponent from '@/components/AllDiffComponent.vue'
+
+export default {
+  name: 'home',
+
+  components: {
+    AllDiffComponent
+  }
+}
+</script>
 
 <style>
   .title {

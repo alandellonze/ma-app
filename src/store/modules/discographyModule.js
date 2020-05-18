@@ -18,6 +18,10 @@ export const discographyModule = {
   },
 
   actions: {
+    allDiff: ({ commit }, params) => {
+      axios.get(`${API_URL}/discography/all`)
+    },
+
     getAllDiscography: async ({ commit }, params) => {
       let discography = await axios.get(`${API_URL}/discography/`, {
         params: {

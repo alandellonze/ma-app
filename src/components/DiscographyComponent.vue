@@ -32,8 +32,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import DiscographyPopup from './DiscographyPopup.vue'
-import LinkComponent from './LinkComponent.vue'
+import DiscographyPopup from '@/components/DiscographyPopup.vue'
+import LinkComponent from '@/components/LinkComponent.vue'
 
 export default {
   name: 'DiscographyComponent',
