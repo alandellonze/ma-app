@@ -35,12 +35,12 @@
 
       <div v-if="value.type === 'PLUS' || value.type === 'CHANGE'">
         <div v-for="album in value.revised" v-bind:key="album.id">
-          <input v-model="album.position" />
-          <input v-model="album.type" />
-          <input v-model="album.typeCount" />
-          <input v-model="album.name" />
-          <input v-model="album.year" />
-          <select v-model="album.status">
+          <input class="position" v-model="album.position" />
+          <input class="type" v-model="album.type" />
+          <input class="typeCount" v-model="album.typeCount" />
+          <input class="name" v-model="album.name" />
+          <input class="year" v-model="album.year" />
+          <select class="status" v-model="album.status">
             <option value="NONE">? - NONE</option>
             <option value="MISSED">x - MISSED</option>
             <option value="PRESENT">v - PRESENT</option>
