@@ -138,7 +138,7 @@ export default {
         html += this.generateCoverStatus(albumOriginal)
       } else if (changes) {
         for (let i = 0; i < 8; i++) {
-          html += this.generateTd(true)
+          html += this.generateTd('', true)
         }
       }
 
@@ -150,7 +150,7 @@ export default {
         html += this.generateYear(albumRevised)
       } else if (changes) {
         for (let i = 0; i < 5; i++) {
-          html += this.generateTd(true)
+          html += this.generateTd('', true)
         }
       }
 
@@ -228,19 +228,21 @@ export default {
     },
 
     generateStatus (album) {
-      let html = this.generateTd()
+      let html
       switch (album.status) {
         case 'NONE':
+          html = this.generateTd('none')
           html += '<span title="not declared yet">?</span>'
           break
 
         case 'MISSED':
+          html = this.generateTd('missed')
           html += '<span title="i don\'t have it">x</span>'
           break
 
         case 'PRESENT':
-        case 'PRESENT_WITH_COVER':
-          html += '<span title="i have it">v</span>'
+          html = this.generateTd('present')
+          html += '<span class="present" title="i have it">v</span>'
           break
       }
       html += '</td>'
@@ -248,18 +250,21 @@ export default {
     },
 
     generateMP3Status (album) {
-      let html = this.generateTd()
+      let html
       switch (album.mp3Status) {
         case 'NOT_PRESENT':
-          html += '<span title="mp3 not present">x</span>'
+          html = this.generateTd('notPresent')
+          html += '<span class="notPresent" title="mp3 not present">x</span>'
           break
 
         case 'TMP':
-          html += '<span title="mp3 temporary">-</span>'
+          html = this.generateTd('tmp')
+          html += '<span class="tmp" title="mp3 temporary">-</span>'
           break
 
         case 'PRESENT':
-          html += '<span title="mp3 present">v</span>'
+          html = this.generateTd('present')
+          html += '<span class="present" title="mp3 present">v</span>'
           break
       }
       html += '</td>'
@@ -267,22 +272,24 @@ export default {
     },
 
     generateCoverStatus (album) {
-      let html = this.generateTd()
+      let html
       switch (album.coverStatus) {
         case 'NOT_PRESENT':
-          html += '<span title="cover not present">x</span>'
+          html = this.generateTd('notPresent')
+          html += '<span class="notPresent" title="cover not present">x</span>'
           break
 
         case 'PRESENT':
-          html += '<span title="cover present">v</span>'
+          html = this.generateTd('present')
+          html += '<span class="present" title="cover present">v</span>'
           break
       }
       html += '</td>'
       return html
     },
 
-    generateTd (withClosure) {
-      let html = '<td style="border-left: 1px SOLID #AAAAAA; border-top: 1px SOLID #AAAAAA;">'
+    generateTd (className, withClosure) {
+      let html = '<td style="border-left: 1px SOLID #AAAAAA; border-top: 1px SOLID #AAAAAA;" class="' + className + '">'
       if (withClosure) {
         html += '</td>'
       }
@@ -302,14 +309,14 @@ export default {
 <style>
   .header {
     position: fixed;
-    top: 0px;
+    top: 0;
     width: 50%;
     background-color: #FFFFFF;
   }
 
   .title {
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 15px;
   }
 
@@ -356,5 +363,21 @@ export default {
     right: 15px;
     font-size: small;
     font-style: italic;
+  }
+
+  .present {
+    background-color: #40fca7;
+  }
+
+  .missed {
+    background-color: #9bcbff;
+  }
+
+  .tmp {
+    background-color: #ffff77;
+  }
+
+  .notPresent {
+    background-color: #ff8686;
   }
 </style>

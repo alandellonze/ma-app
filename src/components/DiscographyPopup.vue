@@ -17,7 +17,6 @@
                   <option value="NONE">? - NONE</option>
                   <option value="MISSED">x - MISSED</option>
                   <option value="PRESENT">v - PRESENT</option>
-                  <option value="PRESENT_WITH_COVER">v - PRESENT WITH COVER</option>
                 </select>
               </td>
             </tr>
@@ -44,7 +43,6 @@
             <option value="NONE">? - NONE</option>
             <option value="MISSED">x - MISSED</option>
             <option value="PRESENT">v - PRESENT</option>
-            <option value="PRESENT_WITH_COVER">v - PRESENT WITH COVER</option>
           </select>
         </div>
       </div>
