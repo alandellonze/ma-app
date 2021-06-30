@@ -4,7 +4,7 @@ const API_URL = process.env.VUE_APP_API_URL
 
 let initialState = () => {
   return {
-    discography: null
+    diff: null
   }
 }
 
@@ -12,8 +12,8 @@ export const discographyModule = {
   state: initialState(),
 
   mutations: {
-    mutateDiscography: (state, discography) => {
-      state.discography = (discography === undefined || discography === '') ? null : discography
+    mutateDiff: (state, diff) => {
+      state.diff = (diff === undefined || diff === '') ? null : diff
     }
   },
 
@@ -22,64 +22,65 @@ export const discographyModule = {
       axios.get(`${API_URL}/discography/all`)
     },
 
-    getAllDiscography: async ({ commit }, params) => {
-      let discography = await axios.get(`${API_URL}/discography/`, {
+    getAllDiff: async ({ commit }, params) => {
+      let response = await axios.get(`${API_URL}/diff`, {
         params: {
           bandName: params.bandName
         }
       })
-      return commit('mutateDiscography', discography.data)
+      return commit('mutateDiff', response.data)
     },
 
     equalAlbum: async ({ state, dispatch }, params) => {
       let data = {
-        band: state.discography.band,
-        albumDiff: params.albumDiff
+        bandId: state.diff.band.id,
+        diff: params.albumDiff
       }
 
       let result = await axios.patch(`${API_URL}/discography/`, data)
       if (result.status === 200) {
-        return dispatch('getAllDiscography', {
-          bandName: state.discography.band.name
+        return dispatch('getAllDiff', {
+          bandName: state.diff.band.name
         })
       }
     },
 
     plusAlbum: async ({ state, dispatch }, params) => {
       let data = {
-        band: state.discography.band,
-        albumDiff: params.albumDiff
+        bandId: state.diff.band.id,
+        diff: params.albumDiff
       }
 
       let result = await axios.post(`${API_URL}/discography/`, data)
       if (result.status === 200) {
-        return dispatch('getAllDiscography', {
-          bandName: state.discography.band.name
+        return dispatch('getAllDiff', {
+          bandName: state.diff.band.name
         })
       }
     },
 
     minusAlbum: async ({ state, dispatch }, params) => {
+      let bandId = state.diff.band.id
       let albumId = params.albumDiff.original[0].id
 
-      let result = await axios.delete(`${API_URL}/discography/${albumId}`)
+      let result = await axios.delete(`${API_URL}/discography/${bandId}/${albumId}`)
       if (result.status === 200) {
-        return dispatch('getAllDiscography', {
-          bandName: state.discography.band.name
+        return dispatch('getAllDiff', {
+          bandName: state.diff.band.name
         })
       }
     },
 
     changeAlbum: async ({ state, dispatch }, params) => {
       let data = {
-        band: state.discography.band,
-        albumDiff: params.albumDiff
+        bandId: state.diff.band.id,
+        diff: params.albumDiff
       }
 
       let result = await axios.put(`${API_URL}/discography/`, data)
       if (result.status === 200) {
-        return dispatch('getAllDiscography', {
-          bandName: state.discography.band.name
+        return dispatch('getAllDiff', {
+          bandName: state.diff.band.name
         })
       }
     },
@@ -92,6 +93,6 @@ export const discographyModule = {
   },
 
   getters: {
-    discography: state => state.discography
+    diff: state => state.diff
   }
 }

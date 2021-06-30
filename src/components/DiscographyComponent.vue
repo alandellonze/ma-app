@@ -1,31 +1,28 @@
 <template>
-  <div class="discography">
+  <div>
     <div class="header">
       <h2 class="title">Metal Archives</h2>
 
       <div class="center">
         <!-- search component -->
         <input v-model="bandName" />
-        <button @click="loadDiscography">Go</button>
-
-        <!-- result -->
-        <div v-if="discography != null">
-          <p>{{discography.band.name}} <span class="resultDiff">({{discography.changes}} differences)</span></p>
-        </div>
+        <button @click.stop="loadDiff">Go</button>
       </div>
     </div>
 
     <!-- diff table -->
-    <div class="result" v-if="discography != null">
-      <div v-html="generateAlbumDiff(discography.changes, discography.albumDiffs)" @click="handleAlbumDiffClick"></div>
+    <div class="result" v-if="diff != null">
+      <div v-html="generateAlbumDiff(diff.band, diff.albumDiff)" @click="handleAlbumDiffClick"></div>
+      <div v-html="generateMP3Diff(diff.band, diff.mp3Diff)"></div>
+      <div v-html="generateCoversDiff(diff.band, diff.coversDiff)"></div>
     </div>
 
     <!-- popup component -->
     <discography-popup v-model="albumDiffSelected"></discography-popup>
 
     <!-- link component -->
-    <div class="linkComponent" v-if="discography != null">
-      <link-component :band="discography.band"></link-component>
+    <div class="linkComponent" v-if="diff != null">
+      <link-component :band="diff.band"></link-component>
     </div>
   </div>
 </template>
@@ -52,27 +49,30 @@ export default {
 
   computed: {
     ...mapGetters([
-      'discography'
+      'diff'
     ])
   },
 
   methods: {
     ...mapActions([
-      'getAllDiscography'
+      'getAllDiff'
     ]),
 
-    loadDiscography () {
+    loadDiff () {
       this.albumDiffSelected = null
 
-      this.getAllDiscography({
+      this.getAllDiff({
         bandName: this.bandName
       })
     },
 
-    generateAlbumDiff (changes, albumDiffs) {
-      let html = '<table cellspacing="0" cellpadding="5" style="font-size: 12px; border-bottom: 1px SOLID #AAAAAA;">'
+    generateAlbumDiff (band, albumDiff) {
+      let changes = albumDiff.changes
+      let html = '<p>' + band.name + ' <span class="resultDiff">(' + changes + ' differences)</span></p>'
 
-      albumDiffs.forEach((albumDiff, index) => {
+      html += '<table cellspacing="0" cellpadding="5" style="font-size: 12px; border-bottom: 1px SOLID #AAAAAA;">'
+
+      albumDiff.diffs.forEach((albumDiff, index) => {
         switch (albumDiff.type) {
           case 'EQUAL':
             albumDiff.original.forEach(albumOriginal => {
@@ -242,7 +242,7 @@ export default {
 
         case 'PRESENT':
           html = this.generateTd('present')
-          html += '<span class="present" title="i have it">v</span>'
+          html += '<span title="i have it">v</span>'
           break
       }
       html += '</td>'
@@ -254,17 +254,17 @@ export default {
       switch (album.mp3Status) {
         case 'NOT_PRESENT':
           html = this.generateTd('notPresent')
-          html += '<span class="notPresent" title="mp3 not present">x</span>'
+          html += '<span title="mp3 not present">x</span>'
           break
 
         case 'TMP':
           html = this.generateTd('tmp')
-          html += '<span class="tmp" title="mp3 temporary">-</span>'
+          html += '<span title="mp3 temporary">-</span>'
           break
 
         case 'PRESENT':
           html = this.generateTd('present')
-          html += '<span class="present" title="mp3 present">v</span>'
+          html += '<span title="mp3 present">v</span>'
           break
       }
       html += '</td>'
@@ -276,12 +276,12 @@ export default {
       switch (album.coverStatus) {
         case 'NOT_PRESENT':
           html = this.generateTd('notPresent')
-          html += '<span class="notPresent" title="cover not present">x</span>'
+          html += '<span title="cover not present">x</span>'
           break
 
         case 'PRESENT':
           html = this.generateTd('present')
-          html += '<span class="present" title="cover present">v</span>'
+          html += '<span title="cover present">v</span>'
           break
       }
       html += '</td>'
@@ -299,9 +299,203 @@ export default {
     handleAlbumDiffClick (event) {
       if (event.target.parentNode.matches('.albumDiff')) {
         let index = event.target.parentNode.attributes.data.nodeValue
-        this.albumDiffSelected = this.discography.albumDiffs[index]
+        this.albumDiffSelected = this.diff.albumDiff.diffs[index]
       }
+    },
+
+    /*********/
+    /* COVER */
+    /*********/
+
+    generateCoversDiff (band, coversDiff) {
+      let changes = coversDiff.changes
+      let html = '<p>covers <span class="resultDiff">(' + changes + ' differences)</span></p>'
+
+      html += '<table cellspacing="0" cellpadding="5" style="font-size: 12px; border-bottom: 1px SOLID #AAAAAA;">'
+
+      coversDiff.diffs.forEach((coverDiff, index) => {
+        switch (coverDiff.type) {
+          case 'EQUAL':
+            coverDiff.original.forEach(albumOriginal => {
+              html += '<tr data="' + index + '" class="albumDiff">'
+              html += this.row(changes, coverDiff.type, albumOriginal, null)
+              html += '</tr>'
+            })
+            break
+
+          case 'PLUS':
+            coverDiff.revised.forEach(albumRevised => {
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, null, albumRevised)
+              html += '</tr>'
+            })
+            break
+
+          case 'MINUS':
+            coverDiff.original.forEach(albumOriginal => {
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, albumOriginal, null)
+              html += '</tr>'
+            })
+            break
+
+          case 'CHANGE':
+            let i = 0
+            for (; i < coverDiff.original.length; i++) {
+              let albumOriginal = coverDiff.original[i]
+              let albumRevised = (i < coverDiff.revised.length) ? coverDiff.revised[i] : null
+
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, albumOriginal, albumRevised)
+              html += '</tr>'
+            }
+
+            for (; i < coverDiff.revised.length; i++) {
+              let albumRevised = coverDiff.revised[i]
+
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, null, albumRevised)
+              html += '</tr>'
+            }
+            break
+        }
+      })
+
+      html += '</table>'
+      return html
+    },
+
+    row (changes, diffType, original, revised) {
+      let html = this.diffType(diffType)
+
+      if (original) {
+        html += this.name(original)
+        html += this.status(diffType)
+      } else if (changes) {
+        for (let i = 0; i < 2; i++) {
+          html += this.generateTd('', true)
+        }
+      }
+
+      if (revised) {
+        html += this.name(revised)
+      } else if (changes) {
+        html += this.generateTd('', true)
+      }
+
+      return html
+    },
+
+    diffType (diffType) {
+      let html = '<td style="border-top: 1px SOLID #AAAAAA;">'
+      switch (diffType) {
+        case 'PLUS':
+          html += '+'
+          break
+
+        case 'MINUS':
+          html += '-'
+          break
+
+        case 'CHANGE':
+          html += '>'
+          break
+      }
+      html += '</td>'
+      return html
+    },
+
+    name (cover) {
+      let html = this.generateTd()
+      html += cover
+      html += '</td>'
+      return html
+    },
+
+    status (diffType) {
+      let html
+      switch (diffType) {
+        case 'EQUAL':
+          html = this.generateTd('present')
+          html += '<span title="i have it">v</span>'
+          break
+
+        case 'MINUS':
+          html = this.generateTd('notPresent')
+          html += '<span title="not present">x</span>'
+          break
+
+        case 'CHANGE':
+          html = this.generateTd('tmp')
+          html += '<span title="i have it">x</span>'
+          break
+      }
+      html += '</td>'
+      return html
+    },
+
+    /*******/
+    /* MP3 */
+    /*******/
+
+    generateMP3Diff (band, mp3Diff) {
+      let changes = mp3Diff.changes
+      let html = '<p>mp3 <span class="resultDiff">(' + changes + ' differences)</span></p>'
+
+      html += '<table cellspacing="0" cellpadding="5" style="font-size: 12px; border-bottom: 1px SOLID #AAAAAA;">'
+
+      mp3Diff.diffs.forEach((coverDiff, index) => {
+        switch (coverDiff.type) {
+          case 'EQUAL':
+            coverDiff.original.forEach(albumOriginal => {
+              html += '<tr data="' + index + '" class="albumDiff">'
+              html += this.row(changes, coverDiff.type, albumOriginal, null)
+              html += '</tr>'
+            })
+            break
+
+          case 'PLUS':
+            coverDiff.revised.forEach(albumRevised => {
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, null, albumRevised)
+              html += '</tr>'
+            })
+            break
+
+          case 'MINUS':
+            coverDiff.original.forEach(albumOriginal => {
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, albumOriginal, null)
+              html += '</tr>'
+            })
+            break
+
+          case 'CHANGE':
+            let i = 0
+            for (; i < coverDiff.original.length; i++) {
+              let albumOriginal = coverDiff.original[i]
+              let albumRevised = (i < coverDiff.revised.length) ? coverDiff.revised[i] : null
+
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, albumOriginal, albumRevised)
+              html += '</tr>'
+            }
+
+            for (; i < coverDiff.revised.length; i++) {
+              let albumRevised = coverDiff.revised[i]
+
+              html += '<tr data="' + index + '" class="albumDiff change">'
+              html += this.row(changes, coverDiff.type, null, albumRevised)
+              html += '</tr>'
+            }
+            break
+        }
+      })
+
+      html += '</table>'
+      return html
     }
+
   }
 }
 </script>
@@ -325,6 +519,8 @@ export default {
   }
 
   .result {
+    display: flex;
+    justify-content: space-around;
     margin-top: 100px;
   }
 
