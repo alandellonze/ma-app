@@ -1,27 +1,19 @@
 <template>
-  <div class="allDiff">
-    <button @click="executeAllDiff">all diff</button>
-  </div>
+  <button @click="executeAllDiff">all diff</button>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'AllDiffComponent',
-
   methods: {
     ...mapActions([
-      'allDiff'
+      'findAllDiffs'
     ]),
 
     executeAllDiff () {
-      this.allDiff()
+      this.findAllDiffs()
     }
-
   }
 }
 </script>
-
-<style>
-</style>

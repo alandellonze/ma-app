@@ -63,8 +63,6 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'DiscographyPopup',
-
   props: {
     value: {
       required: true
@@ -73,6 +71,7 @@ export default {
 
   methods: {
     ...mapActions([
+      'findDiffs',
       'equalAlbum',
       'plusAlbum',
       'minusAlbum',
@@ -99,38 +98,31 @@ export default {
           break
       }
 
+      // reload band
+      this.findDiffs()
+
       // close popup
       this.close()
     },
 
     handleEqual () {
-      return this.equalAlbum({
-        albumDiff: this.value
-      })
+      return this.equalAlbum(this.value)
     },
 
     handlePlus () {
-      return this.plusAlbum({
-        albumDiff: this.value
-      })
+      return this.plusAlbum(this.value)
     },
 
     handleMinus () {
-      return this.minusAlbum({
-        albumDiff: this.value
-      })
+      return this.minusAlbum(this.value.original[0].id)
     },
 
     handleChange () {
-      return this.changeAlbum({
-        albumDiff: this.value
-      })
+      return this.changeAlbum(this.value)
     },
 
     handleCheckMP3 () {
-      return this.checkMP3({
-        albumDiff: this.value
-      })
+      return this.checkMP3(this.value.original[0].id)
     },
 
     close () {
@@ -145,7 +137,7 @@ export default {
 .discographyPopup {
   position: fixed;
   z-index: 1;
-  padding-top: 100px;
+  padding-top: 160px;
   left: 0;
   top: 0;
   width: 100%;
@@ -159,12 +151,13 @@ export default {
   background-color: #FEFEFE;
   margin: auto;
   padding: 20px;
+  border-radius: 10px;
   border: 1px solid #888888;
   width: 50%;
 }
 
 .position {
-  width: 20px;
+  width: 22px;
 }
 
 .type {

@@ -1,30 +1,35 @@
 <template>
   <div class="about">
-    <h2 class="title">Metal Archives</h2>
+    <!-- title -->
+    <TitleComponent />
 
-    <img alt="Metal Archives" src="../assets/logo.png">
+    <!-- logo -->
+    <img class="logo" alt="Metal Archives" src="../assets/logo.png" />
     <p>@ade</p>
 
+    <!-- all diff button -->
     <AllDiffComponent />
   </div>
 </template>
 
 <script>
-import AllDiffComponent from '@/components/AllDiffComponent.vue'
+import TitleComponent from '@/components/TitleComponent'
+import AllDiffComponent from '@/components/AllDiffComponent'
 
 export default {
-  name: 'home',
-
   components: {
+    TitleComponent,
     AllDiffComponent
   }
 }
 </script>
 
 <style>
-  .title {
-    position: fixed;
-    top: 0px;
-    left: 15px;
+  .about {
+    padding-top: 50px;
+  }
+
+  .logo{
+    border-radius: 10px;
   }
 </style>
