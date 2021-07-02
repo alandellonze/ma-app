@@ -47,14 +47,11 @@
         </div>
       </div>
 
-      <button @click="confirm" class="confirm">ok</button>
-      <button @click="close" class="close">close</button>
+      <button class="confirm" @click="confirm">ok</button>
+      <button class="close" @click="close">close</button>
 
-      <button
-        v-if="value.type === 'EQUAL' && value.original[0].mp3Status !== 'NOT_PRESENT' && value.original[0].coverStatus !== 'NOT_PRESENT'"
-        @click="handleCheckMP3" class="checkMP3">
-        mp3
-      </button>
+      <!-- FIXME moved into mp3 popup-->
+      <button class="confirm" @click="confirmMP3" :disabled="value.type !== 'EQUAL'">mp3</button>
     </div>
   </div>
 </template>
@@ -76,25 +73,27 @@ export default {
       'plusAlbum',
       'minusAlbum',
       'changeAlbum',
+
+      // FIXME moved into mp3 popup
       'checkMP3'
     ]),
 
     async confirm () {
       switch (this.value.type) {
         case 'EQUAL':
-          await this.handleEqual()
+          await this.equalAlbum(this.value)
           break
 
         case 'PLUS':
-          await this.handlePlus()
+          await this.plusAlbum(this.value)
           break
 
         case 'MINUS':
-          await this.handleMinus()
+          await this.minusAlbum(this.value.original[0].id)
           break
 
         case 'CHANGE':
-          await this.handleChange()
+          await this.changeAlbum(this.value)
           break
       }
 
@@ -105,28 +104,16 @@ export default {
       this.close()
     },
 
-    handleEqual () {
-      return this.equalAlbum(this.value)
-    },
+    // FIXME moved into mp3 popup
+    async confirmMP3 () {
+      await this.checkMP3(this.value.original[0].id)
 
-    handlePlus () {
-      return this.plusAlbum(this.value)
-    },
-
-    handleMinus () {
-      return this.minusAlbum(this.value.original[0].id)
-    },
-
-    handleChange () {
-      return this.changeAlbum(this.value)
-    },
-
-    handleCheckMP3 () {
-      return this.checkMP3(this.value.original[0].id)
+      // close popup
+      this.close()
     },
 
     close () {
-      // reset value's state
+      // reset the state of field called 'value'
       this.$emit('input', null)
     }
   }
@@ -190,9 +177,5 @@ export default {
   color: #0000DD;
   text-decoration: underline;
   cursor: pointer;
-}
-
-.checkMP3 {
-  float: right;
 }
 </style>
